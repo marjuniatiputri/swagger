@@ -1,0 +1,207 @@
+openapi: 3.0.3
+info:
+  title: Marjuniati Putri - Dokumen API
+  description: >-
+    API Swagger Web nia
+  contact:
+    email: marjuniatiputri@gmail.com
+  license:
+    name: Peda Package
+    url: https://github.com/marjuniatiputri/swagger
+  version: v1.0.0
+externalDocs:
+  description: Repo GCF
+  url: 
+servers:
+  - url: https://asia-southeast2-marjuniati-putri.cloudfunctions.net
+tags:
+  - name: GET GIS LOCATION
+    description: Data Geo Spasial
+    externalDocs:
+      description: Deskripsi dan Kode Program
+      url: https://github.com/adam-ghafara/gcf/
+  - name: SignIn
+    description: Login Token Authorize
+    externalDocs:
+      description: Deskripsi dan Kode Program
+      url: https://github.com/adam-ghafara/gcf/
+  - name: SignUp
+    description: SignUp Akun
+    externalDocs:
+      description: Deskripsi dan Kode Program
+      url: 
+  - name: Create GIS
+    description: Data Geo Spasial
+    externalDocs:
+      description: Deskripsi dan Kode Program
+      url: https://pkg.go.dev/github.com/Fancypedia/fancybackenddd
+      
+
+paths:
+  /backend:  # Penambahan endpoint Create GIS
+    post:
+      tags:
+        - Create GIS
+      summary: Create GIS Data
+      description: Add new GIS data
+      operationId: createGIS
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Peta' # Gunakan skema yang sesuai di sini
+      responses:
+        '201':
+          description: Data successfully created
+        '400':
+          description: Invalid input or request body
+      security:
+        - SECRET:
+            - write:apiKey
+            - read:SECRET
+  /datageojson:
+    get:
+      tags:
+        - GET GIS LOCATION
+      summary: Get Data Geospasial
+      description: List Data Geospasial
+      operationId: getGeoJSON
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Peta'
+        '400':
+          description: Invalid status value
+  /loc-load:
+    get:
+      tags:
+        - POST GIS
+      summary: POST Data Geospasial
+      description: List Data Geospasial
+      operationId: getGeoJSON
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Peta'
+        '400':
+          description: Invalid status value
+  /postSignIn:
+    post:
+      tags:
+        - SignIn
+      summary: Login get Token
+      description: Login and Get User Token
+      operationId: authService
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '405':
+          description: Invalid input
+      security:
+        - token:
+            - write:apiKey
+            - read:apiKey
+  /postSignUp:
+    post:
+      tags:
+        - SignUp
+      summary: SignUp
+      description: Login and Get User Token
+      operationId: authService
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/postSignUp'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/postSignUpResponse'
+        '405':
+          description: Invalid input
+      security:
+        - token:
+            - write:apiKey
+            - read:apiKey
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          example: admin
+        password:
+          type: string
+          example: secret
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: bool
+          example: false
+        message:
+          type: string
+          example: Selamat Datang.
+        token:
+          type: string
+          example: token dropped here
+    postSignUp:
+      type: object
+      properties:
+        username:
+          type: string
+          example: admin
+        password:
+          type: string
+          example: 12345
+    Peta:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "Feature"
+        properties:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "CONTOH TEMPAT"
+        geometry:
+          type: object
+          properties:
+            coordinates:
+              type: array 
+              example: [ [107.59169227820036, -6.972928315950369] ]
+            type:
+              type: string
+              example: "Point"
+  securitySchemes:
+    SECRET:
+      type: apiKey
+      name: SECRET
+      in: header
+      
